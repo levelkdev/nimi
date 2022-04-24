@@ -22,6 +22,7 @@ const abi = [
     type: "function",
   },
 ];
+
 const OuterContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -258,6 +259,24 @@ export default function Template({ userSigner, title }) {
     console.log("ipfscontentHash", ipfsContentHash);
     await contract.setContenthash(node, "0x" + ipfsContentHash);
   };
+
+  // Deploy profile to Lens
+  const lensProfileFunc = async () => {
+    const profileABI = [
+      {"inputs":[{"internalType":"address","name":"hub","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"components":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"handle","type":"string"},{"internalType":"string","name":"imageURI","type":"string"},{"internalType":"address","name":"followModule","type":"address"},{"internalType":"bytes","name":"followModuleData","type":"bytes"},{"internalType":"string","name":"followNFTURI","type":"string"}],"internalType":"struct DataTypes.CreateProfileData","name":"vars","type":"tuple"}],"name":"proxyCreateProfile","outputs":[],"stateMutability":"nonpayable","type":"function"}
+    ]
+    const address = "0x39c9Bc23B1F993B94dEC69B7Ac11C95145EC4e15";
+    const MockProfileCreationProxy = new ethers.Contract(address, abi, provider);
+    const inputStruct: CreateProfileDataStruct = {
+      to: user.address,
+      handle: 'zer0dot',
+      imageURI: 'img',
+      followModule: ZERO_ADDRESS,
+      followModuleData: [],
+      followNFTURI: 'img',
+    };
+    MockProfileCreationProxy.proxyCreateProfile(inputStruct);    
+  }
 
   return (
     <Wrapper>
